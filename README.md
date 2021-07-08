@@ -1,8 +1,8 @@
 # webpack-ts-storybook
 
-This is a repository that reproduces resolving relative imports with extensions in TypeScript. We
-use relative imports with extensions because we
-are using Node.js Native ESM in much of our codebase.
+This is a repository that reproduces the problem webpack (and Vite!) have
+resolving imports with extensions in TypeScript
+(i.e. using `import * from './text.js'` in TypeScript)
 
 ## Installing
 
@@ -29,14 +29,13 @@ To see the bundle run after a succesful pack, run
 node dist/bundle.js
 ```
 
-Note: this "resolution" (of removing the extension) should not be perceived as a solution, because
-in an ESM TypeScript project,
-all extensions in a relative import
+Note: this "resolution" (of removing the extension) should not be perceived as a solution,
+because in an ESM TypeScript project, all extensions in a relative import
 must be specified and must be `.js` (<https://www.typescriptlang.org/docs/handbook/2/modules.html#es-module-syntax>).
 
 ## Description of the problem
 
-So for example the following two files, which should work with TS, WebPack errors when bundling:
+The following two files, which work when transpiling using TSC, WebPack errors when bundling:
 
 ```js
 // src/index.ts
@@ -58,17 +57,13 @@ The above two files work when I do `npx tsc`, and then run `node lib/index.js`. 
 weird behavior of TypeScript, whereby you need to specify a `.js` extension even if the source
 is `.ts`, is documented here: <https://www.typescriptlang.org/docs/handbook/2/modules.html#es-module-syntax>.
 
-Yet, when running webpack (using `npm run build`), you get the following error:
+Yet, when running webpack (using `npm run build`), we get the following error:
 
 ```log
 Error: Can't resolve './text.js' in '/.../webpack-ts-storybook/src'
 resolve './text.js'
 ```
 
-Obviously, it can't resolve (by default), the `test.js` to `test.ts`. But this is strange,
-because `ts-loader` uses TypeScript, so it _should_ have resolved it.
+It can't resolve the `test.js` to `test.ts` (using regular `ts-loader` options).
+But this is strange, because `ts-loader` uses TypeScript, so it _should_ have resolved it.
 
-## What can we do?
-
-Is there a flag that maybe we should pass to TS to turn on the correct resolution? If not, is
-there a plugin that can help us?
