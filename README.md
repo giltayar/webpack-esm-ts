@@ -1,4 +1,4 @@
-# webpack-ts-storybook
+# webpack-esm-ts
 
 This is a repository that reproduces the problem webpack (and Vite!) have
 resolving imports with extensions in TypeScript
@@ -35,7 +35,7 @@ must be specified and must be `.js` (<https://www.typescriptlang.org/docs/handbo
 
 ## Description of the problem
 
-The following two files, which work when transpiling using TSC, WebPack errors when bundling:
+The following two files, which work when transpiling using TSC, generate errors when bundled:
 
 ```js
 // src/index.ts
@@ -57,13 +57,15 @@ The above two files work when I do `npx tsc`, and then run `node lib/index.js`. 
 weird behavior of TypeScript, whereby you need to specify a `.js` extension even if the source
 is `.ts`, is documented here: <https://www.typescriptlang.org/docs/handbook/2/modules.html#es-module-syntax>.
 
-Yet, when running webpack (using `npm run build`), we get the following error:
+Yet, when running webpack (using `npx webpack`), we get the following error:
 
 ```log
-Error: Can't resolve './text.js' in '/.../webpack-ts-storybook/src'
-resolve './text.js'
+Error: Can't resolve './text.js' in '/.../webpack-esm-ts/src'
 ```
 
 It can't resolve the `test.js` to `test.ts` (using regular `ts-loader` options).
-But this is strange, because `ts-loader` uses TypeScript, so it _should_ have resolved it.
+But this is strange, because `ts-loader` uses TypeScript, so it _should_ have resolved it. What
+puts it off is the `.js` extension. It _should_ be looking for a companion `.ts/.tsx` file,
+but doesn't.
 
+Are we doing something wrong in the configuration?
