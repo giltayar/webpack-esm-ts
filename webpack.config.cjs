@@ -18,8 +18,5 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  mode: 'development',
-  resolve: {
-    extensions: ['.ts', '.js', '.json', '.wasm'],
-  },
+  mode: 'production',
 }
